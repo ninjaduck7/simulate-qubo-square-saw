@@ -45,13 +45,13 @@ for row in range(num_rows - 1):
 # A_bond_all for summation of all bonds
 # A_bond for constraints on monomers activation and bond activation
 
-N = 36  # Set the total number of active nodes (updated for 3x3)
-L = 36# Set the total number of active bonds (updated for 3x3)
+N = 60  # Set the total number of active nodes (updated for 3x3)
+L = 60# Set the total number of active bonds (updated for 3x3)
 A_mono = 1
 A_bond_all = 1
 A_corner = 1
 A_diag = 10
-A_bond = 1
+A_bond = 20
 A_adjacent = 10
 # for samoling times
 num_reads = 20

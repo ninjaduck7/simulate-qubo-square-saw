@@ -45,14 +45,25 @@ for row in range(num_rows - 1):
 # A_bond_all for summation of all bonds
 # A_bond for constraints on monomers activation and bond activation
 
-N = 36  # Set the total number of active nodes (updated for 3x3)
-L = 36# Set the total number of active bonds (updated for 3x3)
+N = 22  # Set the total number of active nodes (updated for 3x3)
+L = 20# Set the total number of active bonds (updated for 3x3)
+
+# for total monomers number
 A_mono = 1
+# for total bonds number
 A_bond_all = 1
+
+# for bonds and corners constraint
 A_corner = 1
-A_diag = 10
+
+# for 4-loops exclusion
+A_diag = 1
+
+# for monomer and bonds constraint
 A_bond = 1
-A_adjacent = 10
+
+# for self-avoidance
+A_adjacent = 2
 # for samoling times
 num_reads = 20
 
@@ -158,11 +169,11 @@ def add_adjacent(corner_variables):
 H_adjacent = add_adjacent(corner_variables)
 
 # Apply the workaround for type compatibility: use negative and double negative
-H = A_mono * H_node + A_bond * H_bond_all + A_corner * H_corner - ((-1) * A_bond * H_bond) + A_diag * H_diag + A_adjacent * H_adjacent
-
+H = A_mono * H_node + A_bond_all * H_bond_all  + A_corner * H_corner - ((-1) * A_bond * H_bond) + A_diag * H_diag + A_adjacent * H_adjacent
+H_0 = A_mono * H_node + A_bond_all * H_bond_all - ((-1) * A_bond * H_bond)
 # Compile the model
 start_time = time.time()
-model = H.compile()
+model = H_0.compile(strength =50)
 compilation_time = time.time() - start_time
 bqm = model.to_bqm()
 
@@ -173,7 +184,7 @@ memory_usage_after_compilation = psutil.Process().memory_info().rss / 1024 ** 2 
 sa = neal.SimulatedAnnealingSampler()
 
 start_time = time.time()
-sampleset = sa.sample(bqm, num_reads=num_reads)
+sampleset = sa.sample(bqm, num_reads=num_reads,sweeps=1000,beta_range=(5, 50))
 sampling_time = time.time() - start_time
 
 # Record memory usage after sampling
